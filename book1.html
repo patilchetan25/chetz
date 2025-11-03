@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   We Fell Like Petals · Chetz
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;700&amp;family=Crimson+Text:wght@400;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600&amp;family=Space+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+  <link href="css/main.css" rel="stylesheet"/>
+  <style>
+   .note-page {
+        max-width: 720px;
+        margin: clamp(4rem, 10vh, 6rem) auto;
+        padding: 0 1.5rem 4rem;
+        display: grid;
+        gap: 2.5rem;
+      }
+
+      .note-page header {
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .note-page header h1 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(2.8rem, 6vw, 4.2rem);
+        letter-spacing: -0.04em;
+      }
+
+      .note-page header p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 560px;
+        font-size: 1.05rem;
+      }
+
+      .note-page article {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        padding: clamp(1.8rem, 4vw, 2.4rem);
+        display: grid;
+        gap: 1.4rem;
+        box-shadow: 0 20px 60px rgba(5, 5, 15, 0.4);
+      }
+
+      .note-page article h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        letter-spacing: -0.02em;
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+      }
+
+      .note-page article p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 1rem;
+      }
+
+      .note-page .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .hero__social-link.immersive-trigger {
+        background: none;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+      }
+
+      .hero__social-link[aria-disabled="true"] {
+        opacity: 0.45;
+        border-color: rgba(255, 255, 255, 0.18);
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+
+      .immersive-trigger {
+        position: relative;
+      }
+
+      .immersive-trigger::after {
+        content: "▸";
+        font-size: 0.8rem;
+        margin-left: 0.35rem;
+        transition: transform 0.3s ease;
+      }
+
+      .immersive-trigger.is-active::after {
+        transform: rotate(90deg);
+      }
+
+      .chapter-overlay {
+        position: fixed;
+        inset: 0;
+        backdrop-filter: blur(18px);
+        background: rgba(3, 3, 8, 0.55);
+        display: grid;
+        place-items: end center;
+        padding: clamp(1.5rem, 3vw, 3rem);
+        z-index: 80;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.45s ease;
+      }
+
+      .chapter-overlay.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .chapter-overlay__panel {
+        width: min(960px, 100%);
+        max-height: min(88vh, 760px);
+        background: rgba(10, 10, 18, 0.96);
+        border-radius: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow:
+          0 40px 80px rgba(0, 0, 0, 0.45),
+          0 12px 25px rgba(0, 0, 0, 0.3);
+        transform: translateY(40px) scale(0.98);
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .chapter-overlay.is-visible .chapter-overlay__panel {
+        transform: translateY(0) scale(1);
+      }
+
+      .chapter-overlay__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: clamp(1.4rem, 3vw, 2rem);
+        gap: 1rem;
+      }
+
+      .chapter-overlay__header h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+      }
+
+      .chapter-overlay__close {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        color: var(--text);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 0.5rem 1.2rem;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.72rem;
+      }
+
+      .chapter-overlay__content {
+        padding: clamp(1.2rem, 3vw, 1.8rem) clamp(1.4rem, 4vw, 2.4rem) clamp(2rem, 4vw, 2.8rem);
+        overflow: hidden auto;
+        color: rgba(248, 250, 255, 0.86);
+        font-family: "Crimson Text", serif;
+        font-size: 1.05rem;
+        line-height: 1.85;
+      }
+
+      .chapter-overlay__book {
+        position: relative;
+        padding: clamp(2.4rem, 5vw, 3.2rem);
+        background:
+          radial-gradient(circle at top 12% left 18%, rgba(255, 255, 255, 0.12), transparent 55%),
+          radial-gradient(circle at bottom 10% right 20%, rgba(255, 255, 255, 0.08), transparent 60%),
+          linear-gradient(120deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        column-count: 1;
+        column-gap: clamp(2rem, 4vw, 3.2rem);
+      }
+
+      .chapter-overlay__book::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 2px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+        transform: translateX(-50%);
+        opacity: 0.35;
+      }
+
+      .chapter-overlay__book::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        box-shadow:
+          inset 0 30px 55px rgba(0, 0, 0, 0.2),
+          inset 0 -25px 45px rgba(0, 0, 0, 0.18);
+        pointer-events: none;
+      }
+
+      .chapter-overlay__book > * {
+        break-inside: avoid;
+        margin-bottom: clamp(1.6rem, 3vw, 2.4rem);
+      }
+
+      .chapter-section {
+        position: relative;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .chapter-section__speaker {
+        font-family: var(--font-serif);
+        text-transform: uppercase;
+        letter-spacing: 0.24em;
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      .chapter-section p {
+        color: rgba(248, 250, 255, 0.88);
+        text-indent: 1.6em;
+      }
+
+      .chapter-section p:first-of-type {
+        text-indent: 0;
+      }
+
+      .chapter-section p:first-of-type::first-letter {
+        font-family: var(--font-serif);
+        font-size: clamp(3.4rem, 6vw, 4.4rem);
+        line-height: 1;
+        margin-right: 0.4rem;
+        color: rgba(255, 255, 255, 0.95);
+        float: left;
+      }
+
+      .chapter-divider {
+        border: none;
+        height: 1px;
+        margin: clamp(1rem, 3vw, 1.8rem) 0;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+      }
+
+      body.reader-open {
+        overflow: hidden;
+      }
+
+      @media (min-width: 960px) {
+        .chapter-overlay__book {
+          column-count: 2;
+        }
+      }
+  </style>
+ </head>
+ <body>
+  <div id="app">
+   <header class="site-header">
+    <nav class="site-nav">
+     <a class="brand" href="index.html">
+      Chetz
+     </a>
+     <a class="btn hero__cta-btn" href="index.html#iamawriter">
+      ← Back to writing hub
+     </a>
+    </nav>
+   </header>
+   <main class="note-page">
+    <header>
+     <h1>
+      We Fell Like Petals
+     </h1>
+     <p>
+      In a city that never pauses, Franklin and Emma cross paths beneath falling cherry blossoms — a moment too brief to mean anything, and too real to forget. Their story is still unfolding, somewhere between logic and longing.
+     </p>
+    </header>
+    <article>
+     <h2>
+      Chapter 01 — The First Glimpse
+     </h2>
+     <div class="cta-row">
+      <button class="hero__social-link immersive-trigger" type="button" data-reader-toggle>
+              Open immersive reader
+            </button>
+     </div>
+    </article>
+    <article>
+     <h2>
+      Chapter 02 — Coming Soon
+     </h2>
+     <div class="cta-row">
+      <span class="hero__social-link" aria-disabled="true">More chapters coming soon</span>
+     </div>
+    </article>
+    <article>
+     <h2>
+      Chapter 03 — Coming Soon
+     </h2>
+     <div class="cta-row">
+      <span class="hero__social-link" aria-disabled="true">More chapters coming soon</span>
+     </div>
+    </article>
+   </main>
+  </div>
+  <div aria-hidden="true" class="chapter-overlay" id="chapter-overlay">
+   <div class="chapter-overlay__panel">
+    <header class="chapter-overlay__header">
+     <h2>
+      Chapter 01 — The First Glimpse
+     </h2>
+     <button class="chapter-overlay__close" data-reader-close="" type="button">
+      Close
+     </button>
+    </header>
+        <div class="chapter-overlay__content">
+         <div class="chapter-overlay__book" id="chapter-content">
+          <section class="chapter-section">
+           <span class="chapter-section__speaker">
+            Franklin
+           </span>
+           <p>
+            The first gust of New York air hit like static — cold, fast, alive. I tightened my grip on the suitcase handle and stared up at the glass towers splitting the sky. Every reflection was a reminder: this city eats noise and sells silence back at a markup.
+           </p>
+           <p>
+            My watch buzzed. Another reminder — assignments, deadlines, promises made to myself. Work first. Always work first.
+           </p>
+           <p>
+            Crossing 42nd, I stopped when I saw it — a massive LED screen showing a Korean drama. The actors stood in the rain, arguing about love like it was a science. I wanted to laugh, but the way he looked at her made me stop. It was staged, sure, but not fake. For a second, it felt like the world slowed just enough to listen.
+           </p>
+           <p>
+            The wind shifted, carrying the smell of roasted chestnuts and exhaust. Cherry blossoms, half-bloomed, swayed at the edge of Bryant Park, trying to survive the city’s impatience. A petal landed on my sleeve, and I watched it stick there, weightless but stubborn. For some reason, I didn’t brush it off.
+           </p>
+           <p>
+            My head said keep moving. My chest said wait. I stayed long enough to feel both.
+           </p>
+           <p>
+            The screen flickered; the scene changed. I turned away and kept walking.
+           </p>
+          </section>
+          <hr class="chapter-divider"/>
+          <section class="chapter-section">
+           <span class="chapter-section__speaker">
+            Emma
+           </span>
+           <p>
+            The hospital smelled like antiseptic and burnt coffee. I’d learned to stop noticing. I changed into my sneakers by the lockers, tied the laces tight, double-knotted — the small rituals that pretended to give control.
+           </p>
+           <p>
+            By the time I got outside, the air had softened. The evening light was pale gold, too gentle for the city’s tempo. I walked without a destination, just following the streets like they might know something I didn’t.
+           </p>
+           <p>
+            Passing a storefront window, I saw my reflection layered over a television playing the same Korean drama I’d been watching last night. The same couple in the rain. The same line that always caught me — “If we’re going to break, let’s break beautifully.”
+           </p>
+           <p>
+            I smiled, embarrassed. Romantic nonsense. Still, I lingered. The actress tilted her face up toward the rain, eyes wide, waiting for something that wouldn’t come. I knew that look. I’d worn it before.
+           </p>
+           <p>
+            A soft drift of pink filled the edge of my vision — cherry blossoms, carried by the wind from the square down the street. I followed them, like an idiot chasing paper wishes. When I reached the park, petals spun in circles, too many to count. They clung to hair, to sleeves, to the air itself.
+           </p>
+           <p>
+            A man stood under one of the trees — gray hoodie, still, looking up. His face caught a strip of sunlight and went quiet. I didn’t know him, but something about the way he stood — like he’d just remembered something important — made me stop.
+           </p>
+           <p>
+            I told myself it was nothing. Just a stranger.
+           </p>
+           <p>
+            Still, I stayed until he moved.
+           </p>
+          </section>
+          <hr class="chapter-divider"/>
+          <section class="chapter-section">
+           <span class="chapter-section__speaker">
+            Franklin
+           </span>
+           <p>
+            The wind picked up. Blossoms fell harder, soft collisions against my hoodie. The city kept going — horns, laughter, a siren two blocks away — but this small square felt like it had its own clock.
+           </p>
+           <p>
+            I looked up through the branches, and across the square, I saw her — standing by the bench, hair brushed by wind, watching the same trees I was. Our eyes met for maybe a breath, maybe less. Not enough to mean anything. But somehow, it did.
+           </p>
+           <p>
+            I looked away first. Habit, maybe. Or fear of believing in coincidences.
+           </p>
+           <p>
+            The petal on my sleeve fluttered once and fell. I watched it spiral to the ground, land perfectly still, and thought — okay. Fine. You win.
+           </p>
+          </section>
+          <hr class="chapter-divider"/>
+          <section class="chapter-section">
+           <span class="chapter-section__speaker">
+            Emma
+           </span>
+           <p>
+            He walked away first. I didn’t move, not right away. Just watched the spot he’d been standing, the space that still seemed to hold him.
+           </p>
+           <p>
+            A breeze passed through, gentle this time, brushing blossoms past my shoulder. The petals stuck to my sleeve like punctuation. I didn’t shake them off.
+           </p>
+           <p>
+            The city roared back to life — a bus braking, someone laughing too loudly, a dog barking at nothing. I exhaled, checked the time, and told myself to go. But part of me — a quiet, stubborn part — wanted to stay and see if he’d turn around.
+           </p>
+           <p>
+            He didn’t.
+           </p>
+           <p>
+            Still, the air felt different after that.
+           </p>
+           <p>
+            And that night, when I finally got home, the first thing I noticed wasn’t the mess of textbooks or my ringing phone — it was a single pink petal stuck to the cuff of my sleeve.
+           </p>
+          </section>
+         </div>
+        </div>
+   </div>
+  </div>
+  <script>
+    const readerToggle = document.querySelector('[data-reader-toggle]');
+    const readerOverlay = document.getElementById('chapter-overlay');
+    const readerClose = document.querySelector('[data-reader-close]');
+
+    const openReader = () => {
+      if (!readerOverlay) return;
+      readerOverlay.classList.add('is-visible');
+      readerOverlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('reader-open');
+      readerToggle?.classList.add('is-active');
+    };
+
+    const closeReader = () => {
+      if (!readerOverlay) return;
+      readerOverlay.classList.remove('is-visible');
+      readerOverlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('reader-open');
+      readerToggle?.classList.remove('is-active');
+    };
+
+    readerToggle?.addEventListener('click', (event) => {
+      event.preventDefault();
+      openReader();
+    });
+
+    readerClose?.addEventListener('click', closeReader);
+
+    readerOverlay?.addEventListener('click', (event) => {
+      if (event.target === readerOverlay) {
+        closeReader();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeReader();
+      }
+    });
+  </script>
+</body>
+</html>
