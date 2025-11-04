@@ -290,17 +290,19 @@
       Chapter 01 — The First Glimpse
      </h2>
      <div class="cta-row">
-      <button class="hero__social-link immersive-trigger" type="button" data-reader-toggle>
-              Open immersive reader
-            </button>
+      <button class="hero__social-link immersive-trigger" type="button" data-reader-target="chapter-1">
+       Open immersive reader
+      </button>
      </div>
     </article>
     <article>
      <h2>
-      Chapter 02 — Coming Soon
+      Chapter 02 — Crosswinds
      </h2>
      <div class="cta-row">
-      <span class="hero__social-link" aria-disabled="true">More chapters coming soon</span>
+      <a class="hero__social-link" href="book2.html" rel="noopener" target="_blank">
+       Read Chapter 02
+      </a>
      </div>
     </article>
     <article>
@@ -308,23 +310,25 @@
       Chapter 03 — Coming Soon
      </h2>
      <div class="cta-row">
-      <span class="hero__social-link" aria-disabled="true">More chapters coming soon</span>
+      <span class="hero__social-link" aria-disabled="true">
+       More chapters coming soon
+      </span>
      </div>
     </article>
    </main>
   </div>
-  <div aria-hidden="true" class="chapter-overlay" id="chapter-overlay">
+  <div aria-hidden="true" class="chapter-overlay" data-reader-overlay="chapter-1">
    <div class="chapter-overlay__panel">
     <header class="chapter-overlay__header">
      <h2>
       Chapter 01 — The First Glimpse
      </h2>
-     <button class="chapter-overlay__close" data-reader-close="" type="button">
+     <button class="chapter-overlay__close" data-reader-close type="button">
       Close
      </button>
     </header>
         <div class="chapter-overlay__content">
-         <div class="chapter-overlay__book" id="chapter-content">
+         <div class="chapter-overlay__book">
           <section class="chapter-section">
            <span class="chapter-section__speaker">
             Franklin
@@ -425,44 +429,73 @@
    </div>
   </div>
   <script>
-    const readerToggle = document.querySelector('[data-reader-toggle]');
-    const readerOverlay = document.getElementById('chapter-overlay');
-    const readerClose = document.querySelector('[data-reader-close]');
+   const readerTriggers = document.querySelectorAll("[data-reader-target]");
+   const readerOverlays = document.querySelectorAll("[data-reader-overlay]");
+   const overlayIndex = new Map();
+   let activeOverlay = null;
+   let activeTrigger = null;
 
-    const openReader = () => {
-      if (!readerOverlay) return;
-      readerOverlay.classList.add('is-visible');
-      readerOverlay.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('reader-open');
-      readerToggle?.classList.add('is-active');
-    };
+   const closeOverlay = (returnFocus = true) => {
+     if (!activeOverlay) return;
+     activeOverlay.classList.remove("is-visible");
+     activeOverlay.setAttribute("aria-hidden", "true");
+     document.body.classList.remove("reader-open");
+     activeTrigger?.classList.remove("is-active");
+     if (returnFocus) {
+       activeTrigger?.focus();
+     }
+     activeOverlay = null;
+     activeTrigger = null;
+   };
 
-    const closeReader = () => {
-      if (!readerOverlay) return;
-      readerOverlay.classList.remove('is-visible');
-      readerOverlay.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('reader-open');
-      readerToggle?.classList.remove('is-active');
-    };
+   const openOverlay = (target, trigger) => {
+     const overlay = overlayIndex.get(target);
+     if (!overlay) return;
 
-    readerToggle?.addEventListener('click', (event) => {
-      event.preventDefault();
-      openReader();
-    });
+     if (activeOverlay) {
+       closeOverlay(false);
+     }
 
-    readerClose?.addEventListener('click', closeReader);
+     overlay.classList.add("is-visible");
+     overlay.setAttribute("aria-hidden", "false");
+     document.body.classList.add("reader-open");
+     trigger?.classList.add("is-active");
+     activeOverlay = overlay;
+     activeTrigger = trigger;
+   };
 
-    readerOverlay?.addEventListener('click', (event) => {
-      if (event.target === readerOverlay) {
-        closeReader();
-      }
-    });
+   readerOverlays.forEach((overlay) => {
+     overlayIndex.set(overlay.dataset.readerOverlay, overlay);
+     overlay.querySelectorAll("[data-reader-close]").forEach((button) => {
+       button.addEventListener("click", () => closeOverlay());
+     });
+     overlay.addEventListener("click", (event) => {
+       if (event.target === overlay) {
+         closeOverlay();
+       }
+     });
+   });
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeReader();
-      }
-    });
+   readerTriggers.forEach((trigger) => {
+     trigger.addEventListener("click", (event) => {
+       event.preventDefault();
+       const target = trigger.dataset.readerTarget;
+       if (!target) return;
+
+       if (activeOverlay && activeOverlay.dataset.readerOverlay === target) {
+         closeOverlay();
+         return;
+       }
+
+       openOverlay(target, trigger);
+     });
+   });
+
+   document.addEventListener("keydown", (event) => {
+     if (event.key === "Escape") {
+       closeOverlay();
+     }
+   });
   </script>
-</body>
+ </body>
 </html>
