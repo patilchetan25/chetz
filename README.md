@@ -23,30 +23,11 @@ clonewebsite/
 └── NOTES.md             # working notes
 ```
 
-## Running locally
 
-No build step required—open `index.html` in a browser. For smoother development:
 
-```bash
-cd clonewebsite
-python3 -m http.server 5173
-```
 
-Then visit `http://localhost:5173`  or https://patilchetan25.github.io/chetz/ for hot reloads.
+Then visit https://patilchetan25.github.io/chetz/ for hot reloads.
 
-## GitHub Pages deployment
-
-1. Commit the site files (see instructions below).
-2. Push to GitHub (`main` branch).
-3. In GitHub: **Settings → Pages**, set source to `GitHub Actions` or the `gh-pages` branch (if using a static workflow).
-
-## Commit & push
-
-```bash
-git add .
-git commit -m "Launch We Fell Like Petals portfolio clone"
-git push origin main
-```
 
 ## License
 
