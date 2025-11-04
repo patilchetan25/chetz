@@ -32,7 +32,7 @@ cd clonewebsite
 python3 -m http.server 5173
 ```
 
-Then visit `http://localhost:5173` for hot reloads.
+Then visit `http://localhost:5173`  or https://patilchetan25.github.io/chetz/ for hot reloads.
 
 ## GitHub Pages deployment
 
