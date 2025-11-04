@@ -23,11 +23,7 @@ clonewebsite/
 └── NOTES.md             # working notes
 ```
 
-
-
-
 Then visit https://patilchetan25.github.io/chetz/ for hot reloads.
-
 
 ## License
 
