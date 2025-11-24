@@ -262,6 +262,15 @@
         margin: 0;
       }
 
+      .chapter-pre {
+        white-space: pre-wrap;
+        line-height: 1.75;
+        color: rgba(248, 250, 255, 0.9);
+        font-family: "Crimson Text", serif;
+        font-size: 1.02rem;
+        margin: 0;
+      }
+
       .chapter-embed {
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 18px;
@@ -1149,7 +1158,26 @@ And everything stopped right there.
      </div>
     </div>
    </div>
+   </div>
   </div>
+  <div aria-hidden="true" class="chapter-overlay" data-reader-overlay="chapter-3">
+   <div class="chapter-overlay__panel">
+    <header class="chapter-overlay__header">
+     <h2>
+      Chapter 03 — What the Fck
+     </h2>
+     <button class="chapter-overlay__close" data-reader-close type="button">
+      Close
+     </button>
+    </header>
+    <div class="chapter-overlay__content">
+     <div class="chapter-overlay__book" id="chapter3-slot">
+      <p>
+       Loading chapter…
+      </p>
+     </div>
+    </div>
+   </div>
   </div>
   <script>
    const readerTriggers = document.querySelectorAll("[data-reader-target]");
@@ -1219,6 +1247,24 @@ And everything stopped right there.
        closeOverlay();
      }
    });
+
+   const chapter3Slot = document.getElementById("chapter3-slot");
+   if (chapter3Slot) {
+     fetch("book3.html")
+       .then((res) => res.text())
+       .then((htmlText) => {
+         const doc = new DOMParser().parseFromString(htmlText, "text/html");
+         const sourceContent = doc.querySelector('[data-reader-overlay="chapter-3"] .chapter-overlay__book');
+         if (sourceContent) {
+           chapter3Slot.innerHTML = sourceContent.innerHTML;
+         } else {
+           chapter3Slot.innerHTML = "<p>Chapter content unavailable.</p>";
+         }
+       })
+       .catch(() => {
+         chapter3Slot.innerHTML = "<p>Unable to load chapter content.</p>";
+       });
+   }
   </script>
  </body>
 </html>
