@@ -1256,7 +1256,21 @@ And everything stopped right there.
          const doc = new DOMParser().parseFromString(htmlText, "text/html");
          const sourceContent = doc.querySelector('[data-reader-overlay="chapter-3"] .chapter-overlay__book');
          if (sourceContent) {
-           chapter3Slot.innerHTML = sourceContent.innerHTML;
+           const cloned = sourceContent.cloneNode(true);
+           cloned.querySelectorAll("pre").forEach((pre) => {
+             const text = pre.textContent.trim();
+             const chunks = text.split(/\n\s*\n/);
+             const frag = document.createDocumentFragment();
+             chunks.forEach((chunk) => {
+               const cleaned = chunk.replace(/\s+/g, " ").trim();
+               if (!cleaned) return;
+               const p = document.createElement("p");
+               p.textContent = cleaned;
+               frag.appendChild(p);
+             });
+             pre.replaceWith(frag);
+           });
+           chapter3Slot.innerHTML = cloned.innerHTML;
          } else {
            chapter3Slot.innerHTML = "<p>Chapter content unavailable.</p>";
          }
