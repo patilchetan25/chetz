@@ -262,6 +262,11 @@
         margin: 0;
       }
 
+      /* Allow chapter 3 content to flow across columns */
+      [data-reader-overlay="chapter-3"] .chapter-section {
+        break-inside: auto;
+      }
+
       .chapter-pre {
         white-space: pre-wrap;
         line-height: 1.75;
