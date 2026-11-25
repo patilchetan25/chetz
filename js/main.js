@@ -4,9 +4,16 @@ const yearEl = document.getElementById("year");
 const root = document.documentElement;
 const dayEl = document.querySelector(".hero__badge-day");
 
+const monthEl = document.getElementById("badge-month");
+const now = new Date();
+
 if (dayEl) {
-  const today = new Date().getDate().toString().padStart(2, "0");
-  dayEl.textContent = today;
+  dayEl.textContent = now.getDate().toString().padStart(2, "0");
+}
+if (monthEl) {
+  monthEl.textContent = now
+    .toLocaleString("en-US", { month: "short" })
+    .toLowerCase();   // "nov", "dec", ...
 }
 
 if (navToggle && navLinks) {
